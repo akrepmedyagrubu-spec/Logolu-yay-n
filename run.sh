@@ -1,16 +1,18 @@
 #!/bin/bash
 
-mkdir -p hls
+set -e
 
-# ORIJINAL STREAM BURAYA
+mkdir -p /app/hls
+
 INPUT_STREAM="https://andro.evrenesoglu57.click/checklist/androstreamlivets1.m3u8"
 
-# FFmpeg restart loop (çökünce geri açılır)
+echo "FFmpeg başlatılıyor..."
+
+# FFmpeg arka planda + hata verse bile loop
+(
 while true
 do
-  echo "Stream başlıyor..."
-
-  ffmpeg -re -i "$INPUT_STREAM" -i logo.png \
+  ffmpeg -loglevel error -re -i "$INPUT_STREAM" -i logo.png \
   -filter_complex "overlay=20:20" \
   -c:v libx264 -preset veryfast -crf 23 \
   -c:a aac \
@@ -18,9 +20,15 @@ do
   -hls_time 4 \
   -hls_list_size 6 \
   -hls_flags delete_segments+append_list \
-  -hls_allow_cache 1 \
-  hls/stream.m3u8
+  /app/hls/stream.m3u8
 
-  echo "FFmpeg çöktü, yeniden başlıyor..."
-  sleep 2
-done &
+  echo "FFmpeg çöktü → yeniden başlatılıyor"
+  sleep 3
+done
+) &
+
+# 🔥 KRİTİK: foreground process
+echo "HTTP server başlatılıyor..."
+
+cd /app
+python3 -m http.server ${PORT:-10000}
