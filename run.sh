@@ -2,7 +2,7 @@
 
 mkdir -p /app/hls
 
-INPUT_STREAM="yayin"
+INPUT_STREAM="https://corestream.ardastream.live//beintv/tracks-v1a1/mono.m3u8"
 
 echo "FFmpeg başlatılıyor..."
 
