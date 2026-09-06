@@ -4,7 +4,7 @@ mkdir -p /app/hls
 
 INPUT_STREAM="https://corestream.ardastream.live//beintv/tracks-v1a1/mono.m3u8"
 
-echo "FFmpeg başlatılıyor..."
+echo "FFmpeg 240p başlıyor..."
 
 (
 while true
@@ -13,20 +13,20 @@ do
   -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
   -i "$INPUT_STREAM" -i logo2.png \
   -filter_complex "\
-  [0:v]scale=854:480[base]; \
-  [1:v]scale=854:480[logo]; \
+  [0:v]scale=426:240[base]; \
+  [1:v]scale=426:240[logo]; \
   [base][logo]overlay=0:0" \
   -c:v libx264 -preset ultrafast -tune zerolatency \
-  -b:v 900k -maxrate 1000k -bufsize 1200k \
+  -b:v 400k -maxrate 450k -bufsize 600k \
   -g 48 \
-  -c:a aac -b:a 96k \
+  -c:a aac -b:a 48k \
   -f hls \
   -hls_time 4 \
   -hls_list_size 6 \
   -hls_flags delete_segments+append_list \
   /app/hls/stream.m3u8
 
-  echo "FFmpeg çöktü → restart"
+  echo "FFmpeg restart..."
   sleep 3
 done
 ) &
