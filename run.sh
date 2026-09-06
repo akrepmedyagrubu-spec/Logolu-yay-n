@@ -4,7 +4,7 @@ set -e
 
 mkdir -p /app/hls
 
-INPUT_STREAM="https://andro.evrenesoglu57.click/checklist/androstreamlivets1.m3u8"
+INPUT_STREAM="https://corestream.ardastream.live//beintv/tracks-v1a1/mono.m3u8"
 
 echo "FFmpeg başlatılıyor..."
 
