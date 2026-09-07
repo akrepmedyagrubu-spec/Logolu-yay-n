@@ -2,9 +2,9 @@
 
 mkdir -p /app/hls
 
-INPUT_STREAM="buraya link koy"
+INPUT_STREAM="https://corestream.ardastream.live//beintv/tracks-v1a1/mono.m3u8"
 
-echo "FFmpeg başlatılıyor..."
+echo "360p bufferlı stream başlatılıyor..."
 
 (
 while true
@@ -13,24 +13,23 @@ do
   -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
   -i "$INPUT_STREAM" -i logo3.png \
   -filter_complex "\
-  [0:v]scale=854:480[base]; \
-  [1:v]scale=854:480[logo]; \
+  [0:v]scale=640:360[base]; \
+  [1:v]scale=640:360[logo]; \
   [base][logo]overlay=0:0" \
   -c:v libx264 -preset ultrafast -tune zerolatency \
-  -b:v 900k -maxrate 1000k -bufsize 1200k \
+  -b:v 600k -maxrate 800k -bufsize 1000k \
   -g 48 \
-  -c:a aac -b:a 96k \
+  -c:a aac -b:a 64k \
   -f hls \
-  -hls_time 4 \
-  -hls_list_size 6 \
-  -hls_flags delete_segments+append_list \
+  -hls_time 6 \
+  -hls_list_size 20 \
+  -hls_flags append_list \
   /app/hls/stream.m3u8
 
-  echo "FFmpeg çöktü → restart"
+  echo "FFmpeg restart..."
   sleep 3
 done
 ) &
 
-# Render port fix
 cd /app
 python3 -m http.server ${PORT:-10000}
