@@ -2,31 +2,31 @@
 
 mkdir -p /app/hls
 
-INPUT_STREAM="buraya yayin linki koy"
+INPUT_STREAM="buraya link koy"
 
-echo "FFmpeg 240p başlıyor..."
+echo "FFmpeg başlatılıyor..."
 
 (
 while true
 do
   ffmpeg -loglevel warning \
   -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
-  -i "$INPUT_STREAM" -i logo2.png \
+  -i "$INPUT_STREAM" -i logo3.png \
   -filter_complex "\
-  [0:v]scale=426:240[base]; \
-  [1:v]scale=426:240[logo]; \
+  [0:v]scale=854:480[base]; \
+  [1:v]scale=854:480[logo]; \
   [base][logo]overlay=0:0" \
   -c:v libx264 -preset ultrafast -tune zerolatency \
-  -b:v 400k -maxrate 450k -bufsize 600k \
+  -b:v 900k -maxrate 1000k -bufsize 1200k \
   -g 48 \
-  -c:a aac -b:a 48k \
+  -c:a aac -b:a 96k \
   -f hls \
   -hls_time 4 \
   -hls_list_size 6 \
   -hls_flags delete_segments+append_list \
   /app/hls/stream.m3u8
 
-  echo "FFmpeg restart..."
+  echo "FFmpeg çöktü → restart"
   sleep 3
 done
 ) &
